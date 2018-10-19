@@ -17,7 +17,6 @@
                     android:layout_height="wrap_content"
                     android:textColor="#212121"
                     android:textStyle="normal"
-                    android:textScaleX="17sp"
                     android:paddingRight="9dp"
                     android:paddingBottom="-7dp"
                     android:text="Stairway to heaven"

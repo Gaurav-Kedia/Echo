@@ -6,16 +6,16 @@ import android.content.Context
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import com.gaurav.echo.R
 import com.gaurav.echo.Songs
+import com.gaurav.echo.adapter.MainScreenAdapter
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -29,6 +29,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class mainScreenFragment : Fragment() {
 
+    var getSongsList: ArrayList<Songs>?= null
     var nowPlayBottomBar: RelativeLayout?=null
     var playPauseButton: ImageButton?=null
     var songTitle: TextView?=null
@@ -36,7 +37,17 @@ class mainScreenFragment : Fragment() {
     var noSongs: RelativeLayout?=null
     var recyclerView: RecyclerView?=null
     var myActivity: Activity?=null
+    var _mainScreenAdapter: MainScreenAdapter?=null
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        getSongsList = getSongsFromPhone()
+        _mainScreenAdapter = MainScreenAdapter(getSongsList as ArrayList<Songs>, myActivity as Context)
+        val mLayoutManager = LinearLayoutManager(myActivity)
+        recyclerView?.layoutManager = mLayoutManager
+        recyclerView?.itemAnimator = DefaultItemAnimator()
+        recyclerView?.adapter = _mainScreenAdapter
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

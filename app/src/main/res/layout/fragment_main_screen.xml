@@ -24,7 +24,7 @@
                 android:layout_alignParentBottom="true"
                 android:background="@color/colorPrimary">
 
-            <ImageView
+            <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/playPauseButton"

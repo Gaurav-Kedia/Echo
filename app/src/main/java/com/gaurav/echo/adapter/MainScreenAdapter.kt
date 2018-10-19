@@ -1,5 +1,6 @@
 package com.gaurav.echo.adapter
 
+import com.gaurav.echo.R
 import android.content.Context
 import android.support.constraint.R.id.parent
 import android.support.v7.widget.RecyclerView
@@ -32,7 +33,7 @@ class MainScreenAdapter (_songDetails: ArrayList<Songs>, _context: Context): Rec
         })
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainScreenAdapter.MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView = LayoutInflater.from(parent?.context)
             .inflate(R.layout.row_custom_mainscreen_adapter,parent, false)
         return MyViewHolder(itemView)
