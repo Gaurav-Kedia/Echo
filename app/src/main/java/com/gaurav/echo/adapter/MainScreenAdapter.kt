@@ -2,7 +2,10 @@ package com.gaurav.echo.adapter
 
 import com.gaurav.echo.R
 import android.content.Context
+import android.os.Bundle
+import android.support.annotation.NonNull
 import android.support.constraint.R.id.parent
+import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +16,9 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.gaurav.echo.Songs
+import com.gaurav.echo.activities.MainActivity
+import com.gaurav.echo.fragments.SongPlayingFragment
+import com.gaurav.echo.fragments.mainScreenFragment
 
 class MainScreenAdapter (_songDetails: ArrayList<Songs>, _context: Context): RecyclerView.Adapter<MainScreenAdapter.MyViewHolder>(){
 
@@ -29,7 +35,19 @@ class MainScreenAdapter (_songDetails: ArrayList<Songs>, _context: Context): Rec
         holder.trackTitle?.text = songObject?.songTitle
         holder.trackArtist?.text = songObject?.artist
         holder.contentHolder?.setOnClickListener({
-            Toast.makeText(mContext, "Hey" + songObject?.songTitle, Toast.LENGTH_SHORT).show()
+            val songPlayingFragment = SongPlayingFragment()
+            var  args = Bundle()
+            args.putString("songArtist", songObject?.artist)
+            args.putString("path", songObject?.songData)
+            args.putString("songTitle", songObject?.songTitle)
+            args.putInt("songId", songObject?.songID?.toInt() as Int)
+            args.putInt("songPosition", position)
+            args.putParcelableArrayList("songData", songDetails)
+            songPlayingFragment.arguments = args
+            (mContext as FragmentActivity).supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.details_fragment, songPlayingFragment)
+                .commit()
         })
     }
 
