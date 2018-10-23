@@ -9,24 +9,13 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import com.gaurav.echo.R
 import com.gaurav.echo.Songs
 import com.gaurav.echo.adapter.MainScreenAdapter
+import java.util.*
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- *
- */
 class mainScreenFragment : Fragment() {
 
     var getSongsList: ArrayList<Songs>?= null
@@ -42,11 +31,63 @@ class mainScreenFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         getSongsList = getSongsFromPhone()
-        _mainScreenAdapter = MainScreenAdapter(getSongsList as ArrayList<Songs>, myActivity as Context)
-        val mLayoutManager = LinearLayoutManager(myActivity)
-        recyclerView?.layoutManager = mLayoutManager
-        recyclerView?.itemAnimator = DefaultItemAnimator()
-        recyclerView?.adapter = _mainScreenAdapter
+
+        val prefs = myActivity?.getSharedPreferences("action_sort", Context.MODE_PRIVATE)
+        val action_sort_ascending = prefs?.getString("action_sort_ascending", "true")
+        val action_sort_recent = prefs?.getString("action_sort_recent", "false")
+
+        if(getSongsList == null){
+            visibleLayout?.visibility = View.INVISIBLE
+            noSongs?.visibility = View.VISIBLE
+        } else {
+            _mainScreenAdapter = MainScreenAdapter(getSongsList as ArrayList<Songs>, myActivity as Context)
+            var mLayoutManager = LinearLayoutManager(myActivity)
+            recyclerView?.layoutManager = mLayoutManager
+            recyclerView?.itemAnimator = DefaultItemAnimator()
+            recyclerView?.adapter = _mainScreenAdapter
+        }
+
+        if(getSongsList != null){
+            if(action_sort_ascending.equals("true", true)){
+                Collections.sort(getSongsList, Songs.Statified.nameComparator)
+                _mainScreenAdapter?.notifyDataSetChanged()
+            } else if(action_sort_recent.equals("true", true)){
+                Collections.sort(getSongsList, Songs.Statified.dateComparator)
+                _mainScreenAdapter?.notifyDataSetChanged()
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        menu?.clear()
+        inflater?.inflate(R.menu.main, menu)
+        return
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val switcher = item?.itemId
+        if(switcher == R.id.action_sort_ascending){
+            val editor = myActivity?.getSharedPreferences("action_sort", Context.MODE_PRIVATE)?.edit()
+            editor?.putString("action_sort_ascending", "true")
+            editor?.putString("action_sort_recent", "false")
+            editor?.apply()
+            if(getSongsList != null){
+                Collections.sort(getSongsList, Songs.Statified.nameComparator)
+            }
+            _mainScreenAdapter?.notifyDataSetChanged()
+            return false
+        } else if (switcher == R.id.action_sort_recent) {
+            val editorTwo = myActivity?.getSharedPreferences("action_sort", Context.MODE_PRIVATE)?.edit()
+            editorTwo?.putString("action_sort_recent", "true")
+            editorTwo?.putString("action_sort_asccending", "false")
+            editorTwo?.apply()
+            if(getSongsList != null){
+                Collections.sort(getSongsList, Songs.Statified.dateComparator)
+            }
+            _mainScreenAdapter?.notifyDataSetChanged()
+            return false
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateView(
@@ -55,6 +96,7 @@ class mainScreenFragment : Fragment() {
 
 
         val view = inflater!!.inflate(R.layout.fragment_main_screen, container, false)
+        setHasOptionsMenu(true)
         visibleLayout = view?.findViewById<RelativeLayout>(R.id.visibleLayout)
         noSongs = view?.findViewById<RelativeLayout>(R.id.noSongs)
         nowPlayBottomBar = view?.findViewById<RelativeLayout>(R.id.hiddenBarMainScreen)

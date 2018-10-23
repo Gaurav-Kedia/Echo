@@ -49,7 +49,7 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/songTitleMainScreen"
+                android:id="@+id/songTitleFavscreen"
                 android:layout_below="@+id/nowPlaying"
                 android:ellipsize="end"
                 android:maxLines="1"

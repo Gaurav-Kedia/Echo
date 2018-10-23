@@ -23,20 +23,23 @@ import android.widget.TextView
 import com.gaurav.echo.R
 import com.gaurav.echo.Songs
 import com.gaurav.echo.adapter.FavoriteAdapter
-
-
+import com.gaurav.echo.databases.EchoDatabase
 
 
 class FavoriteFragment : Fragment() {
 
     var myActivity: Activity?= null
-    var getSongsList: ArrayList<Songs>?=null
     var nofavorites: TextView?=null
     var nowPlayingBottomBar: RelativeLayout?=null
     var playPauseButton: ImageButton?=null
     var songTitle: TextView?=null
     var recyclerView: RecyclerView?=null
     var trackPosition: Int = 0
+    var favoriteContent: EchoDatabase?=null
+
+    var refreshList: ArrayList<Songs>?=null
+    var getListfromDatabase: ArrayList<Songs>?=null
+
     object Statified{
         var mediaplayer: MediaPlayer?=null
     }
@@ -49,7 +52,7 @@ class FavoriteFragment : Fragment() {
 
         nofavorites = view?.findViewById(R.id.nofavorites)
         nowPlayingBottomBar = view?.findViewById(R.id.hiddenBarFavScreen)
-        songTitle = view?.findViewById(R.id.songTitle)
+        songTitle = view?.findViewById(R.id.songTitleFavscreen)
         playPauseButton = view?.findViewById(R.id.playPauseButton)
         recyclerView = view?.findViewById(R.id.favouriteRecycler)
         return view
@@ -71,19 +74,9 @@ class FavoriteFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
             super.onActivityCreated(savedInstanceState)
-        getSongsList = getSongsFromPhone()
-        if (getSongsList == null){
-            recyclerView?.visibility = View.INVISIBLE
-            nofavorites?.visibility = View.VISIBLE
-        } else {
-            var favoriteAdapter = FavoriteAdapter(getSongsList as ArrayList<Songs>, myActivity as Context)
-            val mLayoutManger = LinearLayoutManager(activity)
-            recyclerView?.layoutManager = mLayoutManger
-            recyclerView?.itemAnimator = DefaultItemAnimator()
-            recyclerView?.adapter = favoriteAdapter
-            recyclerView?.setHasFixedSize(true)
-        }
-
+        favoriteContent = EchoDatabase(myActivity)
+        display_favorites_by_searching()
+        bottomBarSetup()
     }
 
     override fun onResume() {
@@ -145,7 +138,7 @@ class FavoriteFragment : Fragment() {
             args.putString("songArtist", SongPlayingFragment.Statified.currentSongHelper?.songArtist)
             args.putString("path", SongPlayingFragment.Statified.currentSongHelper?.songPath)
             args.putString("songTitle", SongPlayingFragment.Statified.currentSongHelper?.songTitle)
-            args.putInt("songId", SongPlayingFragment.Statified.currentSongHelper?.songId as Int)
+            args.putInt("songId", SongPlayingFragment.Statified.currentSongHelper?.songId?.toInt() as Int)
             args.putInt("songPosition", SongPlayingFragment.Statified.currentSongHelper?.currentPosition?.toInt() as Int)
             args.putParcelableArrayList("songData", SongPlayingFragment.Statified.fetchSongs)
             args.putString("FavBottomBar", "success")
@@ -167,6 +160,39 @@ class FavoriteFragment : Fragment() {
                 playPauseButton?.setBackgroundResource(R.drawable.pause_icon)
             }
         })
+    }
+    fun display_favorites_by_searching(){
+        if(favoriteContent?.checkSize() as Int > 0){
+            refreshList = ArrayList<Songs>()
+            getListfromDatabase = favoriteContent?.queryDBList()
+            var fetchListfromDevice = getSongsFromPhone()
+            if(fetchListfromDevice != null){
+                for(i in 0..fetchListfromDevice?.size -1){
+                    for (j in 0..getListfromDatabase?.size as Int -1){
+                        if((getListfromDatabase?.get(j)?.songID) === (fetchListfromDevice?.get(i)?.songID)){
+                            refreshList?.add((getListfromDatabase as ArrayList<Songs>)[j])
+                        }
+                    }
+                }
+            } else {
+
+            }
+            if (refreshList == null){
+                recyclerView?.visibility = View.INVISIBLE
+                nofavorites?.visibility = View.VISIBLE
+            } else {
+                var favoriteAdapter = FavoriteAdapter(refreshList as ArrayList<Songs>, myActivity as Context)
+                val mLayoutManger = LinearLayoutManager(myActivity)
+                recyclerView?.layoutManager = mLayoutManger
+                recyclerView?.itemAnimator = DefaultItemAnimator()
+                recyclerView?.adapter = favoriteAdapter
+                recyclerView?.setHasFixedSize(true)
+            }
+        } else {
+            recyclerView?.visibility = View.INVISIBLE
+            nofavorites?.visibility = View.VISIBLE
+        }
+
     }
 
 }

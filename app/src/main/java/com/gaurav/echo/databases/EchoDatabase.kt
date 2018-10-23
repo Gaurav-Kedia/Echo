@@ -87,4 +87,17 @@ class EchoDatabase: SQLiteOpenHelper{
         db.delete(TABLE_NAME, COLUMN_ID + " = " + _id, null)
         db.close()
     }
+    fun checkSize(): Int{
+        var counter = 0;
+        val db = this.readableDatabase
+        val query_params = "SELECT * FROM " + TABLE_NAME
+        val cSor = db.rawQuery(query_params, null)
+        if(cSor.moveToFirst()){
+            do { counter = counter + 1
+            }while (cSor.moveToNext())
+        } else {
+            counter = 0
+        }
+     return counter
+    }
 }
