@@ -97,6 +97,7 @@ class mainScreenFragment : Fragment() {
 
         val view = inflater!!.inflate(R.layout.fragment_main_screen, container, false)
         setHasOptionsMenu(true)
+        activity?.title = "All songs"
         visibleLayout = view?.findViewById<RelativeLayout>(R.id.visibleLayout)
         noSongs = view?.findViewById<RelativeLayout>(R.id.noSongs)
         nowPlayBottomBar = view?.findViewById<RelativeLayout>(R.id.hiddenBarMainScreen)

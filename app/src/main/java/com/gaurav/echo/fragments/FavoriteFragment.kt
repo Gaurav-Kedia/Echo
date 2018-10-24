@@ -49,6 +49,7 @@ class FavoriteFragment : Fragment() {
         savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_favorite, container, false)
+        activity?.title = "favorites"
 
         nofavorites = view?.findViewById(R.id.nofavorites)
         nowPlayingBottomBar = view?.findViewById(R.id.hiddenBarFavScreen)
@@ -85,6 +86,8 @@ class FavoriteFragment : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
         super.onPrepareOptionsMenu(menu)
+        val item = menu?.findItem(R.id.action_sort)
+        item?.isVisible = false
     }
 
     fun getSongsFromPhone():ArrayList<Songs>{

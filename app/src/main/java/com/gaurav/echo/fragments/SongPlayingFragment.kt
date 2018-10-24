@@ -86,7 +86,8 @@ class SongPlayingFragment : Fragment() {
                 val getCurrent = mediaplayer?.getCurrentPosition()
                 startTimeTExt?.setText(String.format("%d:%d",
                     TimeUnit.MILLISECONDS.toMinutes(getCurrent?.toLong() as Long),
-                    TimeUnit.MILLISECONDS.toSeconds(TimeUnit.MILLISECONDS.toMinutes(getCurrent?.toLong() as Long))))
+                    TimeUnit.MILLISECONDS.toSeconds(
+                        TimeUnit.MILLISECONDS.toMinutes(getCurrent?.toLong() as Long))))
                 Statified.seekBar?.setProgress(getCurrent?.toInt() as Int)
                 Handler().postDelayed(this, 1000)
             }
@@ -136,8 +137,16 @@ class SongPlayingFragment : Fragment() {
             }
         }
         fun updateTextviews(songTitle: String, songArtist: String){
-            songTitleView?.setText(songTitle)
-            songArtistView?.setText(songArtist)
+            var SongTitleupdated = songTitle
+            var songArtistupdated = songArtist
+            if(songTitle.equals("<unknown>", true)){
+                SongTitleupdated = "unknown"
+            }
+            if(songArtist.equals("<unknown>", true)){
+                songArtistupdated = "unknown"
+            }
+            songTitleView?.setText(SongTitleupdated)
+            songArtistView?.setText(songArtistupdated)
         }
 
         fun processInformation(mediaPlayer: MediaPlayer){
@@ -208,6 +217,7 @@ class SongPlayingFragment : Fragment() {
         savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         var view = inflater!!.inflate(R.layout.fragment_song_playing, container, false)
+        activity?.title = "Now Playing"
         setHasOptionsMenu(true)
         Statified.seekBar = view?.findViewById(R.id.seekBar)
         Statified.startTimeTExt = view?.findViewById(R.id.startTime)

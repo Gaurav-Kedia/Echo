@@ -36,7 +36,7 @@ class MainScreenAdapter (_songDetails: ArrayList<Songs>, _context: Context): Rec
         holder.trackArtist?.text = songObject?.artist
         holder.contentHolder?.setOnClickListener({
             val songPlayingFragment = SongPlayingFragment()
-            var  args = Bundle()
+            val args = Bundle()
             args.putString("songArtist", songObject?.artist)
             args.putString("path", songObject?.songData)
             args.putString("songTitle", songObject?.songTitle)

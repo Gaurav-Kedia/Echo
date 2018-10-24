@@ -1,5 +1,10 @@
 package com.gaurav.echo.activities
 
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import com.gaurav.echo.R
 import android.os.Bundle
 import android.support.v4.widget.DrawerLayout
@@ -8,7 +13,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
 import com.gaurav.echo.activities.MainActivity.Statified.drawerLayout
 import com.gaurav.echo.adapter.NavigationDrawerAdapter
+import com.gaurav.echo.fragments.SongPlayingFragment
 import com.gaurav.echo.fragments.mainScreenFragment
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity(){
 
@@ -19,8 +26,10 @@ class MainActivity : AppCompatActivity(){
         R.drawable.navigation_aboutus)
     object Statified{
         var drawerLayout: DrawerLayout?=null
+        var notificationManager: NotificationManager?=null
     }
 
+    var trackNotificationBuilder: Notification?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +64,46 @@ class MainActivity : AppCompatActivity(){
 
         navigation_recycle_view.adapter = _navigationAdapter
         navigation_recycle_view.setHasFixedSize(true)
+
+        val intent = Intent(this@MainActivity, MainActivity::class.java)
+        val pIntent = PendingIntent.getActivity(this@MainActivity, System.currentTimeMillis().toInt(),
+            intent, 0)
+        trackNotificationBuilder = Notification.Builder(this)
+            .setContentTitle("A Track is playing in background")
+            .setSmallIcon(R.drawable.echo_logo)
+            .setContentIntent(pIntent)
+            .setOngoing(true)
+            .setAutoCancel(true)
+            .build()
+        Statified.notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
     override fun onStart() {
         super.onStart()
+        try {
+            Statified.notificationManager?.cancel(1999)
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        try {
+            if(SongPlayingFragment.Statified.mediaplayer?.isPlaying as Boolean){
+                Statified.notificationManager?.notify(1999, trackNotificationBuilder)
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        try {
+            Statified.notificationManager?.cancel(1999)
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
     }
 }

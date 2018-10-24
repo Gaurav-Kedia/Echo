@@ -25,8 +25,14 @@ class SeetingsFragment : Fragment() {
         savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_seetings, container, false)
+        activity?.title = "Settings"
         shakeSwitch = view?.findViewById(R.id.switchShake)
         return view
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onAttach(context: Context?) {
@@ -63,6 +69,8 @@ class SeetingsFragment : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
         super.onPrepareOptionsMenu(menu)
+        val item = menu?.findItem(R.id.action_sort)
+        item?.isVisible = false
     }
 
 
