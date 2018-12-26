@@ -12,17 +12,25 @@ class Songs(var songID: Long, var songTitle: String, var artist: String,
     override fun describeContents(): Int {
         return 0
     }
+
+    var msongDateAdded: Long = 0
+
+
+    init {
+        this.msongDateAdded = dateAdded
+    }
+
     object Statified{
         var nameComparator: Comparator<Songs> = Comparator<Songs>{song1, song2 ->
-            val songOne = song1.songTitle.toUpperCase()
-            val songTwo = song2.songTitle.toUpperCase()
-            songOne.compareTo(songTwo)
+            val nameOne = song1.songTitle.toUpperCase()
+            val nameTwo = song2.songTitle.toUpperCase()
+            nameOne.compareTo(nameTwo)
         }
 
         var dateComparator: Comparator<Songs> = Comparator<Songs>{song1, song2 ->
-            val songOne = song1.dateAdded.toDouble()
-            val songTwo = song2.dateAdded.toDouble()
-            songTwo.compareTo(songOne)
+            val dataOne = song1.dateAdded.toDouble()
+            val dataTwo = song2.dateAdded.toDouble()
+            dataTwo.compareTo(dataOne)
         }
     }
 

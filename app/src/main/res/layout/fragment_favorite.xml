@@ -4,7 +4,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
-        android:background="#ffffff">
+        android:background="#ffffff"
+        android:orientation="vertical"
+>
     <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -68,7 +70,7 @@
             android:id="@+id/nofavorites"
             android:layout_centerInParent="true"
             android:textColor="#212121"
-            android:text="Your have no favorites"
+            android:text="You have not got any favourites!"
             android:visibility="invisible"
     />
 </RelativeLayout>

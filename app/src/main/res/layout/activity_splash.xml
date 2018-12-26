@@ -7,8 +7,8 @@
         tools:context=".activities.splash_Activity"
         android:background="@drawable/bg">
     <ImageView
-            android:layout_width="100dp"
-            android:layout_height="80dp"
+            android:layout_width="160dp"
+            android:layout_height="82dp"
             android:src="@drawable/echo_logo"
             android:layout_centerInParent="true"/>
 
