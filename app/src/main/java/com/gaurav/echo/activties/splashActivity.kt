@@ -1,4 +1,4 @@
-package com.gaurav.echo.activities
+package com.gaurav.echo.activties
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -11,7 +11,7 @@ import android.support.v4.app.ActivityCompat
 import android.widget.Toast
 import com.gaurav.echo.R
 
-class splash_Activity : AppCompatActivity() {
+class splashActivity : AppCompatActivity() {
 
     var permissionString = arrayOf( Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.MODIFY_AUDIO_SETTINGS,
@@ -23,12 +23,12 @@ class splash_Activity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        if(!hasPermission(this@splash_Activity, *permissionString)){
+        if(!hasPermission(this@splashActivity, *permissionString)){
 
-            ActivityCompat.requestPermissions(this@splash_Activity, permissionString, 131)
+            ActivityCompat.requestPermissions(this@splashActivity, permissionString, 131)
         } else {
             Handler().postDelayed({
-                val startAct = Intent(this@splash_Activity, MainActivity::class.java)
+                val startAct = Intent(this@splashActivity, MainActivity::class.java)
                 startActivity(startAct)
                 this.finish()
             }, 1000)
@@ -48,18 +48,18 @@ class splash_Activity : AppCompatActivity() {
                     && grantResults[3] == PackageManager.PERMISSION_GRANTED
                     && grantResults[4] == PackageManager.PERMISSION_GRANTED) {
                     Handler().postDelayed({
-                        val startAct = Intent(this@splash_Activity, MainActivity::class.java)
+                        val startAct = Intent(this@splashActivity, MainActivity::class.java)
                         startActivity(startAct)
                         this.finish()
                     }, 1000)
                 } else{
-                    Toast.makeText(this@splash_Activity,"Please grant all permissions to continue", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@splashActivity,"Please grant all permissions to continue", Toast.LENGTH_LONG).show()
                     this.finish()
                 }
                 return
             }
             else->{
-                Toast.makeText(this@splash_Activity, "Something went wrong", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@splashActivity, "Something went wrong", Toast.LENGTH_LONG).show()
                 this.finish()
                 return
             }

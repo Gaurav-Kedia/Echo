@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         android:background="#fff"
         android:fitsSystemWindows="true"
-        tools:context=".activities.MainActivity">
+        tools:context=".activties.MainActivity">
 
 
     <RelativeLayout
@@ -30,7 +30,7 @@
 
         <fragment
                 android:layout_below="@+id/appBarLayout"
-                class="com.gaurav.echo.fragments.mainScreenFragment"
+                class="com.gaurav.echo.fragments.MainScreenFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/details_fragment"/>

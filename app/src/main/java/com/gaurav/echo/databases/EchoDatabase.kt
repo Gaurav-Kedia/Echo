@@ -4,100 +4,113 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import com.gaurav.echo.Songs
-import com.gaurav.echo.databases.EchoDatabase.Staticated.COLUMN_ID
-import com.gaurav.echo.databases.EchoDatabase.Staticated.COLUMN_SONG_ARTIST
-import com.gaurav.echo.databases.EchoDatabase.Staticated.COLUMN_SONG_PATH
-import com.gaurav.echo.databases.EchoDatabase.Staticated.COLUMN_SONG_TITLE
-import com.gaurav.echo.databases.EchoDatabase.Staticated.TABLE_NAME
+import com.gaurav.echo.models.Songs
 
-class EchoDatabase: SQLiteOpenHelper{
+class EchoDatabase : SQLiteOpenHelper {
+    var _songsList = ArrayList<Songs>()
 
-    var _songList = ArrayList<Songs>()
 
-    object Staticated{
-        val DB_NAME = "FavouriteDAtabase"
-        var DB_VERSION = 1
-
-        val TABLE_NAME = "FvouriteTable"
-        val COLUMN_ID = "SongID"
-        val COLUMN_SONG_TITLE = "SongTitle"
-        val COLUMN_SONG_ARTIST = "SongArtist"
+    object Statified {
+        val DB_NAME = "FavouriteDatabase"
+        val TABLE_NAME = "FavouriteTable"
         val COLUMN_SONG_PATH = "SongPath"
+        val COLUMN_SONG_ARTIST = "SongArtist"
+        val COLUMN_SONG_TITLE = "SongTitle"
+        val COLUMN_ID = "SongId"
+        val DB_VERSION = 13
+    }
+
+    constructor(context: Context, name: String, factory: SQLiteDatabase.CursorFactory, version: Int) : super(context, name, factory, version) {}
+
+    constructor(context: Context?) : super(context, EchoDatabase.Statified.DB_NAME, null, EchoDatabase.Statified.DB_VERSION) {}
+
+    override fun onCreate(sqLiteDatabase: SQLiteDatabase) {
+        sqLiteDatabase.execSQL("CREATE TABLE " + EchoDatabase.Statified.TABLE_NAME + "( " + EchoDatabase.Statified.COLUMN_ID +
+                " INTEGER," + EchoDatabase.Statified.COLUMN_SONG_ARTIST + " STRING," + EchoDatabase.Statified.COLUMN_SONG_TITLE + " STRING,"
+                + EchoDatabase.Statified.COLUMN_SONG_PATH + " STRING);")
 
     }
 
-    override fun onCreate(sqliteDatabase: SQLiteDatabase?) {
-        sqliteDatabase?.execSQL(
-        "CREATE TABLE " + TABLE_NAME + "( " + COLUMN_ID + " INTEGER," +
-                COLUMN_SONG_ARTIST + " STRING," + COLUMN_SONG_TITLE +
-                " STRING," + COLUMN_SONG_PATH + " STRING);")
+    override fun onUpgrade(sqLiteDatabase: SQLiteDatabase, i: Int, i1: Int) {
+
     }
 
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-    }
-
-    constructor(context: Context?) : super(
-        context, Staticated.DB_NAME, null, Staticated.DB_VERSION
-    )
-    fun storeAsFavorite(id: Int?, artist: String?, songTitle: String?, path: String?){
+    fun storeasFavourite(id: Int?, artist: String?, songTitle: String?, path: String?) {
         val db = this.writableDatabase
-        var contentValues = ContentValues()
-        contentValues.put(COLUMN_ID, id)
-        contentValues.put(COLUMN_SONG_ARTIST, artist)
-        contentValues.put(COLUMN_SONG_TITLE, songTitle)
-        contentValues.put(COLUMN_SONG_PATH, path)
-        db.insert(TABLE_NAME, null, contentValues)
+        val contentValues = ContentValues()
+        contentValues.put(EchoDatabase.Statified.COLUMN_ID, id)
+        contentValues.put(EchoDatabase.Statified.COLUMN_SONG_ARTIST, artist)
+        contentValues.put(EchoDatabase.Statified.COLUMN_SONG_TITLE, songTitle)
+        contentValues.put(EchoDatabase.Statified.COLUMN_SONG_PATH, path)
+        db.insert(EchoDatabase.Statified.TABLE_NAME, null, contentValues)
         db.close()
     }
-    fun queryDBList(): ArrayList<Songs>? {
-        try{
+
+    fun queryDBforList(): ArrayList<Songs>? {
+        try {
+
             val db = this.readableDatabase
-            val query_params = "SELECT * FROM " + TABLE_NAME
-            var cSor = db.rawQuery(query_params, null)
-            if(cSor.moveToFirst()){
+            val query_params = "SELECT " + "*" + " FROM " + EchoDatabase.Statified.TABLE_NAME
+            val cSor = db.rawQuery(query_params, null)
+            if (cSor.moveToFirst()) {
                 do {
-                    var _id = cSor.getInt(cSor.getColumnIndexOrThrow(COLUMN_ID))
-                    var _artist = cSor.getString(cSor.getColumnIndexOrThrow(COLUMN_SONG_ARTIST))
-                    var _title = cSor.getString(cSor.getColumnIndexOrThrow(COLUMN_SONG_TITLE))
-                    var _songPath = cSor.getString(cSor.getColumnIndexOrThrow(COLUMN_SONG_PATH))
-                    _songList.add(Songs(_id.toLong(), _title, _artist, _songPath, 0))
-                }while (cSor.moveToNext())
-            } else { return null}
-        }catch (e :Exception){
+                    var _id = cSor.getInt(cSor.getColumnIndexOrThrow(EchoDatabase.Statified.COLUMN_ID))
+                    var _artist = cSor.getString(cSor.getColumnIndexOrThrow(EchoDatabase.Statified.COLUMN_SONG_ARTIST))
+                    var _title = cSor.getString(cSor.getColumnIndexOrThrow(EchoDatabase.Statified.COLUMN_SONG_TITLE))
+                    var _songPath = cSor.getString(cSor.getColumnIndexOrThrow(EchoDatabase.Statified.COLUMN_SONG_PATH))
+                    _songsList.add(Songs(_id.toLong(), _title, _artist, _songPath, 0))
+                } while (cSor.moveToNext())
+            } else {
+                return null
+            }
+
+        } catch (e: Exception) {
             e.printStackTrace()
+
         }
-        return _songList
+
+        return _songsList
+
     }
-    fun checkifIdExists(_id: Int): Boolean{
+
+
+    fun checkSize(): Int {
+        var counter = 0
+        val db = this.readableDatabase
+        val query_params = "SELECT " + "*" + " FROM " + EchoDatabase.Statified.TABLE_NAME
+        val cSor = db.rawQuery(query_params, null)
+        if (cSor.moveToFirst()) {
+            do {
+                counter++
+            } while (cSor.moveToNext())
+        } else {
+            return 0
+        }
+        return counter
+    }
+
+    fun checkifIdExists(_id: Int): Boolean {
         var storeId = -1090
         val db = this.readableDatabase
-        val query_params = "SELECT * FROM " + TABLE_NAME + " WHERE SongID = '$_id'"
+        val query_params = "SELECT * FROM " + EchoDatabase.Statified.TABLE_NAME + " WHERE SongId = '$_id'"
         val cSor = db.rawQuery(query_params, null)
-        if(cSor.moveToNext()){
+        if (cSor.moveToFirst()) {
             do {
+                storeId = cSor.getInt(cSor.getColumnIndexOrThrow(EchoDatabase.Statified.COLUMN_ID))
 
-            }while (cSor.moveToNext())
-        } else {return false}
+
+            } while (cSor.moveToNext())
+        } else {
+            return false
+        }
         return storeId != -1090
     }
-    fun deleteFavourite(_id: Int){
+
+    fun deleteFavourite(_id: Int) {
         val db = this.writableDatabase
-        db.delete(TABLE_NAME, COLUMN_ID + " = " + _id, null)
+        db.delete(EchoDatabase.Statified.TABLE_NAME, EchoDatabase.Statified.COLUMN_ID + "=" + _id, null)
         db.close()
     }
-    fun checkSize(): Int{
-        var counter = 0;
-        val db = this.readableDatabase
-        val query_params = "SELECT * FROM " + TABLE_NAME
-        val cSor = db.rawQuery(query_params, null)
-        if(cSor.moveToFirst()){
-            do { counter = counter + 1
-            }while (cSor.moveToNext())
-        } else {
-            counter = 0
-        }
-     return counter
-    }
+
+
 }
